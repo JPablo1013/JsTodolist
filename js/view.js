@@ -9,6 +9,7 @@ export default class View {
     this.addTodoForm = new AddTodo();
     this.modal = new Modal();
     this.filters = new Filters();
+    this.todoChart = null; // para almacenar la instancia de la gráfica
     
 
     this.addTodoForm.onClick((title, description) => this.addTodo(title, description));
@@ -16,13 +17,46 @@ export default class View {
     this.filters.onClick((filters) => this.filter(filters));
   }
 
+   // Agrega esta función para inicializar la gráfica
+   initializeChart() {
+    const ctx = document.getElementById('todoChart').getContext('2d');
+    this.todoChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Completed', 'Uncompleted'],
+        datasets: [{
+          label: 'Task Status',
+          data: [0, 0], // Inicialmente vacíos
+          backgroundColor: ['#4caf50', '#f44336'],
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      }
+    });
+  }
+
+  // Método para actualizar los datos de la gráfica
+  updateChart() {
+    const todos = this.model.getTodos();
+    const completedCount = todos.filter(todo => todo.completed).length;
+    const uncompletedCount = todos.length - completedCount;
+
+    this.todoChart.data.datasets[0].data = [completedCount, uncompletedCount];
+    this.todoChart.update();
+  }
+
   setModel(model) {
     this.model = model;
   }
 
+  // Llama a `initializeChart` en el método `render`
   render() {
+    this.initializeChart();
     const todos = this.model.getTodos();
     todos.forEach((todo) => this.createRow(todo));
+    this.updateChart(); // Actualiza la gráfica al renderizar
   }
 
   filter(filters) {
@@ -54,10 +88,12 @@ export default class View {
   addTodo(title, description) {
     const todo = this.model.addTodo(title, description);
     this.createRow(todo);
+    this.updateChart(); // Actualiza la gráfica cada vez que agregas una tarea
   }
 
   toggleCompleted(id) {
     this.model.toggleCompleted(id);
+    this.updateChart(); // Actualiza la gráfica cada vez que se cambia el estado de una tarea
   }
 
   editTodo(id, values) {
@@ -71,6 +107,7 @@ export default class View {
   removeTodo(id) {
     this.model.removeTodo(id);
     document.getElementById(id).remove();
+    this.updateChart(); // Actualiza la gráfica cada vez que se elimina una tarea
   }
 
   createRow(todo) {
