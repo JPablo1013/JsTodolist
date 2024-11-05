@@ -9,3 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   view.render();
 });
+
+function test(num, f){
+  return f(num);
+}
+
+function dup (num){
+  return num * 2;
+}
+
+test(5, (num) => num *2);
