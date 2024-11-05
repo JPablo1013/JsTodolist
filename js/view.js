@@ -51,7 +51,11 @@ export default class View {
     this.model = model;
   }
 
+<<<<<<< HEAD
   // Llama a `initializeChart` en el método `render`
+=======
+  // Llama a initializeChart en el método render
+>>>>>>> 25c3189b17720936792361d2ec30aff58773a26b
   render() {
     this.initializeChart();
     const todos = this.model.getTodos();
@@ -148,5 +152,5 @@ export default class View {
     removeBtn.innerHTML = '<i class="fa fa-trash"></i>';
     removeBtn.onclick = () => this.removeTodo(todo.id);
     row.children[3].appendChild(removeBtn);
-  }
+  }
 }
